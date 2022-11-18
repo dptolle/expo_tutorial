@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expoTSSkeleton",
-    "slug": "expoTSSkeleton",
+    "name": "StickerSmash",
+    "slug": "StickerSmash",
     "version": "1.0.0",
     "entryPoint": "./src/App.tsx",
     "orientation": "portrait",
