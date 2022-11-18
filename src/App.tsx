@@ -1,11 +1,12 @@
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { registerRootComponent } from 'expo';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState, useRef } from 'react';
 import * as MediaLibrary from 'expo-media-library';
 import { captureRef } from 'react-native-view-shot';
+import domtoimage from 'dom-to-image';
 
 import Button from './components/Button';
 import ImageViewer from './components/ImageViewer';
@@ -24,7 +25,7 @@ function App() {
   const [selectedImage, setSelectedImage]  = useState(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
 
-  const imageRef = useRef();
+  const imageRef:React.MutableRefObject<any> = useRef();
 
   if (status === null) {
     requestPermission();
@@ -57,6 +58,7 @@ function App() {
   };
 
   const onSaveImageAsync = async () => {
+    if (Platform.OS !== 'web') {
     try {
       const localUri = await captureRef(imageRef, {
         height: 440,
@@ -70,6 +72,24 @@ function App() {
     } catch (e) {
       console.log(e);
     }
+  }
+  else {
+    domtoimage
+    .toJpeg(imageRef.current, {
+        quality: 0.95,
+        width: 320,
+        height: 440,
+      })
+    .then((dataUrl:string) => {
+      let link = document.createElement('a');
+      link.download = 'sticker-smash.jpeg';
+      link.href = dataUrl;
+      link.click();
+    })
+    .catch((e: Error) => {
+      console.log(e);
+    });
+  }
   };
 
   return (
